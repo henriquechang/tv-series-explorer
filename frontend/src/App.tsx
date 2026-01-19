@@ -1,29 +1,31 @@
 import { useState } from 'react';
 import { SearchBar } from './components/SearchBar';
+import { ShowDetails } from './components/ShowDetails';
 import type { ShowSearchResult } from './types';
 import './App.css';
 
 function App() {
-  const [selectedShow, setSelectedShow] = useState<ShowSearchResult | null>(null);
+  const [selectedShowId, setSelectedShowId] = useState<number | null>(null);
+
+  const handleSelectShow = (show: ShowSearchResult) => {
+    setSelectedShowId(show.id);
+  };
+
+  const handleBack = () => {
+    setSelectedShowId(null);
+  };
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>TV Series Explorer</h1>
+        <h1 onClick={handleBack} style={{ cursor: 'pointer' }}>TV Series Explorer</h1>
       </header>
 
       <main className="app-main">
-        <SearchBar onSelectShow={setSelectedShow} />
-
-        {selectedShow && (
-          <div className="selected-show">
-            <h2>Selected: {selectedShow.name}</h2>
-            {selectedShow.poster_url && (
-              <img src={selectedShow.poster_url} alt={selectedShow.name} className="show-poster" />
-            )}
-            <p>Year: {selectedShow.year || 'Unknown'}</p>
-            <p className="hint">Show details page coming soon!</p>
-          </div>
+        {selectedShowId === null ? (
+          <SearchBar onSelectShow={handleSelectShow} />
+        ) : (
+          <ShowDetails showId={selectedShowId} onBack={handleBack} />
         )}
       </main>
     </div>
