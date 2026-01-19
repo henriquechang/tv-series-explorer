@@ -39,7 +39,6 @@ async def get_show_with_episodes(
     show_id: int,
     repository: ShowRepository = Depends(get_show_repository)
 ):
-    """Get show details with episodes grouped by season."""
     use_case = GetShowDetailsUseCase(repository)
     result = await use_case.execute(show_id)
     

@@ -34,7 +34,6 @@ class ShowDetailsDTO:
 
 
 class GetShowDetailsUseCase:
-    """Use case for getting show details with episodes grouped by season."""
 
     def __init__(self, show_repository: ShowRepository):
         self._repository = show_repository
@@ -71,7 +70,6 @@ class GetShowDetailsUseCase:
             )
             seasons_dict[ep.season].append(episode_dto)
 
-        # Sort episodes within each season and create SeasonDTOs
         return [
             SeasonDTO(
                 season_number=num, 

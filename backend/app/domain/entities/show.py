@@ -4,7 +4,6 @@ from typing import Optional
 
 @dataclass
 class Show:
-    """TV show data"""
     id: int
     name: str
     year: Optional[int] = None
@@ -14,7 +13,6 @@ class Show:
 
     @classmethod
     def from_tvmaze_search(cls, data: dict) -> "Show":
-        """Parse search result from TVMaze"""
         show_data = data.get("show", data)
         premiered = show_data.get("premiered", "")
         year = int(premiered[:4]) if premiered else None
@@ -31,7 +29,6 @@ class Show:
 
     @classmethod
     def from_tvmaze_show(cls, data: dict) -> "Show":
-        """Parse show details from TVMaze"""
         premiered = data.get("premiered", "")
         year = int(premiered[:4]) if premiered else None
         image = data.get("image") or {}

@@ -31,7 +31,6 @@ async def search_shows(
     q: str = Query(..., description="Search query"),
     repository: ShowRepository = Depends(get_show_repository)
 ):
-    """Search for TV shows by name."""
     use_case = SearchShowsUseCase(repository)
     results = await use_case.execute(q)
     return [
@@ -50,7 +49,6 @@ async def get_show(
     show_id: int,
     repository: ShowRepository = Depends(get_show_repository)
 ):
-    """Get details for a specific show."""
     show = await repository.get_by_id(show_id)
     if not show:
         raise HTTPException(status_code=404, detail="Show not found")

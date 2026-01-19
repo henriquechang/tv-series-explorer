@@ -4,7 +4,6 @@ from typing import Optional
 
 @dataclass
 class Episode:
-    """Episode info"""
     id: int
     show_id: int
     season: int
@@ -16,7 +15,6 @@ class Episode:
 
     @classmethod
     def from_tvmaze(cls, data: dict, show_id: int) -> "Episode":
-        """Build episode from API data"""
         return cls(
             id=data["id"],
             show_id=show_id,

@@ -7,7 +7,6 @@ from app.domain.interfaces.show_repository import ShowRepository
 
 
 class TVMazeClient(ShowRepository):
-    """Implementation of ShowRepository using TVMaze API."""
 
     BASE_URL = "http://api.tvmaze.com"
 
@@ -20,7 +19,6 @@ class TVMazeClient(ShowRepository):
         return self._client
 
     async def search(self, query: str) -> list[Show]:
-        """Search for TV shows by name."""
         if not query or not query.strip():
             return []
 
@@ -35,7 +33,6 @@ class TVMazeClient(ShowRepository):
         return [Show.from_tvmaze_search(item) for item in results]
 
     async def get_by_id(self, show_id: int) -> Optional[Show]:
-        """Get a specific show by ID."""
         client = await self._get_client()
         response = await client.get(f"{self.BASE_URL}/shows/{show_id}")
         
@@ -46,7 +43,6 @@ class TVMazeClient(ShowRepository):
         return Show.from_tvmaze_show(response.json())
 
     async def get_episodes(self, show_id: int) -> list[Episode]:
-        """Get all episodes for a show."""
         client = await self._get_client()
         response = await client.get(f"{self.BASE_URL}/shows/{show_id}/episodes")
         
@@ -58,7 +54,6 @@ class TVMazeClient(ShowRepository):
         return [Episode.from_tvmaze(ep, show_id) for ep in results]
 
     async def close(self):
-        """Close the HTTP client."""
         if self._client:
             await self._client.aclose()
             self._client = None

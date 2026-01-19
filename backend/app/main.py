@@ -8,7 +8,6 @@ from app.infrastructure.api.dependencies import cleanup_clients
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Manage application lifecycle."""
     yield
     await cleanup_clients()
 
@@ -20,7 +19,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration for frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -29,15 +27,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
 app.include_router(shows.router, prefix="/api")
 app.include_router(episodes.router, prefix="/api")
 
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
     return {"status": "healthy"}
-
-
-# Run with: uvicorn app.main:app --host 0.0.0.0 --port 7777 --reload
