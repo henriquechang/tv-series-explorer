@@ -1,0 +1,19 @@
+version: "3.3"
+
+services:
+  backend:
+    build: ./backend
+    container_name: tv-explorer-backend
+    volumes:
+      - db-data:/app/data
+
+  frontend:
+    build: ./frontend
+    container_name: tv-explorer-frontend
+    ports:
+      - "7777:80"
+    depends_on:
+      - backend
+
+volumes:
+  db-data:
