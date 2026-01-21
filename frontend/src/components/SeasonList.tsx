@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Season } from '../types';
+import { AIInsight } from './AIInsight';
 
-export function SeasonList({ seasons }: { seasons: Season[] }) {
+export function SeasonList({ seasons, showId }: { seasons: Season[]; showId: number }) {
   const [expandedSeason, setExpandedSeason] = useState<number | null>(1);
 
   return (
@@ -29,6 +30,9 @@ export function SeasonList({ seasons }: { seasons: Season[] }) {
                   {ep.summary && (
                     <p className="episode-summary">{ep.summary.replace(/<[^>]*>/g, '')}</p>
                   )}
+                  <div className="episode-insight">
+                    <AIInsight showId={showId} episodeId={ep.id} />
+                  </div>
                 </li>
               ))}
             </ul>

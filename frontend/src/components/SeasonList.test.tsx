@@ -21,25 +21,25 @@ describe('SeasonList', () => {
   ]
 
   it('shows all seasons', () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
     expect(screen.getByText('Season 1')).toBeInTheDocument()
     expect(screen.getByText('Season 2')).toBeInTheDocument()
   })
 
   it('shows episode count', () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
     expect(screen.getByText('2 episodes')).toBeInTheDocument()
     expect(screen.getByText('1 episodes')).toBeInTheDocument()
   })
 
   it('expands first season by default', () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
     expect(screen.getByText('Pilot')).toBeInTheDocument()
     expect(screen.getByText('Cat Bag')).toBeInTheDocument()
   })
 
   it('toggles seasons', async () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
 
     expect(screen.queryByText('Test')).not.toBeInTheDocument()
     
@@ -51,30 +51,30 @@ describe('SeasonList', () => {
   })
 
   it('shows episode details', () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
     expect(screen.getByText('1')).toBeInTheDocument()
     expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('2008-01-20')).toBeInTheDocument()
   })
 
   it('shows episode summary', () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
     expect(screen.getByText('First episode')).toBeInTheDocument()
   })
 
   it('removes html from summary', () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
     expect(screen.queryByText(/<p>/)).not.toBeInTheDocument()
     expect(screen.getByText('First episode')).toBeInTheDocument()
   })
 
   it('handles empty seasons', () => {
-    render(<SeasonList seasons={[]} />)
+    render(<SeasonList seasons={[]} showId={1} />)
     expect(screen.queryByText('Season')).not.toBeInTheDocument()
   })
 
   it('handles episodes without summary', () => {
-    render(<SeasonList seasons={mockSeasons} />)
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
     const catBagElem = screen.getByText('Cat Bag').parentElement
     expect(catBagElem?.parentElement?.querySelector('.episode-summary')).not.toBeInTheDocument()
   })

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import type { ShowWithEpisodes } from '../types';
 import { SeasonList } from './SeasonList';
+import { AIInsight } from './AIInsight';
 
 type ShowDetailsProps = {
   showId: number;
@@ -53,6 +54,7 @@ export function ShowDetails({ showId, onBack }: ShowDetailsProps) {
             </div>
           )}
           {show.summary && <p className="summary">{show.summary.replace(/<[^>]*>/g, '')}</p>}
+          <AIInsight showId={show.id} />
         </div>
       </div>
 
@@ -61,7 +63,7 @@ export function ShowDetails({ showId, onBack }: ShowDetailsProps) {
         {show.seasons.length === 0 ? (
           <p>No episodes available</p>
         ) : (
-          <SeasonList seasons={show.seasons} />
+          <SeasonList seasons={show.seasons} showId={show.id} />
         )}
       </div>
     </div>

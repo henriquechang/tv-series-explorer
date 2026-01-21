@@ -25,5 +25,15 @@ export const api = {
 
   async getShowDetails(id: number): Promise<ShowWithEpisodes> {
     return fetchJson<ShowWithEpisodes>(`${API_BASE}/shows/${id}/details`);
+  },
+
+  async getShowInsight(showId: number): Promise<{ insight: string; source: string }> {
+    return fetchJson<{ insight: string; source: string }>(`${API_BASE}/shows/${showId}/insight`);
+  },
+
+  async getEpisodeInsight(showId: number, episodeId: number): Promise<{ insight: string; source: string }> {
+    return fetchJson<{ insight: string; source: string }>(
+      `${API_BASE}/shows/${showId}/episodes/${episodeId}/insight`
+    );
   }
 };

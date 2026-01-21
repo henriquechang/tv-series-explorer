@@ -267,6 +267,65 @@ body {
   font-size: 14px;
 }
 
+.ai-insight {
+  margin: 10px 0;
+}
+
+.insight-button {
+  background: transparent;
+  border: 1px solid #ddd;
+  color: #666;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.insight-button:hover {
+  background: #f9f9f9;
+}
+
+.insight-loading {
+  color: #999;
+  font-size: 13px;
+}
+
+.insight-error {
+  color: #d32f2f;
+  font-size: 13px;
+}
+
+.insight-content {
+  margin-top: 8px;
+}
+
+.insight-text {
+  background: #fafafa;
+  padding: 10px;
+  border-left: 2px solid #ddd;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.refresh-button {
+  background: transparent;
+  border: none;
+  color: #999;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.refresh-button:hover {
+  color: #666;
+}
+
+.episode-insight {
+  padding-left: 50px;
+  padding-bottom: 8px;
+}
+
 @media (max-width: 600px) {
   .show-header {
     flex-direction: column;
