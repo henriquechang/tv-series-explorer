@@ -20,3 +20,6 @@ pytest-cov==6.0.0
 
 # CORS
 python-multipart==0.0.12
+
+# AI/ML
+huggingface_hub==1.3.2

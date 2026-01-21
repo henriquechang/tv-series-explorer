@@ -7,6 +7,7 @@ Interactive TV series browsing with AI-powered insights.
 - **Backend:** Python 3.10, FastAPI 0.128.0
 - **Frontend:** React 19.2.0, TypeScript 5.9.3
 - **Docker:** Compose v3.3
+- **HuggingFace Inference API (with fallback)** Compose v3.3
 
 ## Quick Start (Docker)
 
@@ -15,9 +16,23 @@ Interactive TV series browsing with AI-powered insights.
 - Docker 20.10+
 - Docker Compose 1.29+ (or Docker Compose V2)
 
+### With HuggingFace API Key (Optional)
+
+Create a `.env` file in the project root:
+
 ```bash
-docker-compose up --build
+HUGGINGFACE_API_KEY=hf_your_token_here
 ```
+
+Then run:
+
+```bash
+docker compose up --build
+```
+
+Without the key, AI insights will use a fallback response.
+
+> **Note:** The API key will be provided separately via email.
 
 ## Development Setup
 

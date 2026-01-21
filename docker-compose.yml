@@ -6,6 +6,8 @@ services:
     container_name: tv-explorer-backend
     volumes:
       - db-data:/app/data
+    environment:
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY:-}
 
   frontend:
     build: ./frontend
