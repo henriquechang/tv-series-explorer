@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from app.domain.interfaces.ai_repository import AIRepository
+from app.domain.interfaces.comment_repository import CommentRepository
 from app.domain.interfaces.show_repository import ShowRepository
 
 
@@ -13,21 +14,35 @@ class InsightDTO:
 
 class GetShowInsightUseCase:
 
-    def __init__(self, ai_repository: AIRepository, show_repository: ShowRepository):
+    def __init__(
+        self,
+        ai_repository: AIRepository,
+        show_repository: ShowRepository,
+        comment_repository: Optional[CommentRepository] = None
+    ):
         self._ai = ai_repository
         self._shows = show_repository
+        self._comments = comment_repository
 
     async def execute(self, show_id: int) -> Optional[InsightDTO]:
         show = await self._shows.get_by_id(show_id)
         if not show:
             return None
 
+        comment_texts = []
+        if self._comments:
+            try:
+                comments = await self._comments.get_for_show(show_id)
+                comment_texts = [c.text for c in comments]
+            except Exception:
+                pass 
+
         try:
             insight = await self._ai.generate_show_insight(
                 name=show.name,
                 summary=show.summary,
                 genres=show.genres or [],
-                comments=[]
+                comments=comment_texts
             )
             return InsightDTO(insight=insight, source="ai")
         except Exception:
@@ -39,9 +54,15 @@ class GetShowInsightUseCase:
 
 class GetEpisodeInsightUseCase:
 
-    def __init__(self, ai_repository: AIRepository, show_repository: ShowRepository):
+    def __init__(
+        self,
+        ai_repository: AIRepository,
+        show_repository: ShowRepository,
+        comment_repository: Optional[CommentRepository] = None
+    ):
         self._ai = ai_repository
         self._shows = show_repository
+        self._comments = comment_repository
 
     async def execute(self, show_id: int, episode_id: int) -> Optional[InsightDTO]:
         show = await self._shows.get_by_id(show_id)
@@ -53,6 +74,14 @@ class GetEpisodeInsightUseCase:
         if not episode:
             return None
 
+        comment_texts = []
+        if self._comments:
+            try:
+                comments = await self._comments.get_for_episode(episode_id)
+                comment_texts = [c.text for c in comments]
+            except Exception:
+                pass
+
         try:
             insight = await self._ai.generate_episode_insight(
                 show_name=show.name,
@@ -61,7 +90,7 @@ class GetEpisodeInsightUseCase:
                 number=episode.number,
                 summary=episode.summary,
                 genres=show.genres or [],
-                comments=[]
+                comments=comment_texts
             )
             return InsightDTO(insight=insight, source="ai")
         except Exception:

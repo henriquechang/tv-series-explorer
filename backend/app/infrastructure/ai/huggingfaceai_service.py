@@ -52,6 +52,19 @@ class HuggingFaceAIService(AIRepository):
         )
         return await self._generate(prompt)
 
+    def _format_comments(self, comments: Optional[list[str]]) -> Optional[str]:
+        if not comments:
+            return None
+        # Include up to 3 most recent comments for context
+        recent_comments = comments[:3]
+        comments_text = " | ".join([c[:100] for c in recent_comments])
+        return f"Recent viewer comments: {comments_text}"
+
+    def _clean_summary(self, summary: Optional[str]) -> Optional[str]:
+        if not summary:
+            return None
+        return summary.replace('<p>', '').replace('</p>', '').strip()[:500]
+
     def _build_show_prompt(
         self,
         name: str,
@@ -60,11 +73,18 @@ class HuggingFaceAIService(AIRepository):
         comments: list[str] = None
     ) -> str:
         parts = [f"Write a single compelling insight about the TV show '{name}'."]
+        
         if genres:
             parts.append(f"Genres: {', '.join(genres)}.")
-        if summary:
-            clean_summary = summary.replace('<p>', '').replace('</p>', '').strip()
-            parts.append(f"Summary: {clean_summary[:500]}")
+        
+        clean_summary = self._clean_summary(summary)
+        if clean_summary:
+            parts.append(f"Summary: {clean_summary}")
+        
+        formatted_comments = self._format_comments(comments)
+        if formatted_comments:
+            parts.append(formatted_comments)
+        
         parts.append("Provide exactly 2-3 sentences that capture what makes this show unique and appealing. Do not list multiple options, just give one cohesive insight.")
         return " ".join(parts)
 
@@ -81,11 +101,18 @@ class HuggingFaceAIService(AIRepository):
         parts = [
             f"Write a single insight for episode '{episode_name}' (S{season}E{number}) from '{show_name}'."
         ]
+        
         if genres:
             parts.append(f"Show genres: {', '.join(genres)}.")
-        if summary:
-            clean_summary = summary.replace('<p>', '').replace('</p>', '').strip()
-            parts.append(f"Episode summary: {clean_summary[:500]}")
+        
+        clean_summary = self._clean_summary(summary)
+        if clean_summary:
+            parts.append(f"Episode summary: {clean_summary}")
+        
+        formatted_comments = self._format_comments(comments)
+        if formatted_comments:
+            parts.append(formatted_comments)
+        
         parts.append("Provide exactly 2-3 sentences about this episode's themes and significance. Do not list options, just give one cohesive insight.")
         return " ".join(parts)
 

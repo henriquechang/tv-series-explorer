@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from app.infrastructure.api.dependencies import get_show_repository, get_ai_service
+from app.infrastructure.api.dependencies import get_show_repository, get_ai_service, get_comment_repository
 from app.application.use_cases.get_ai_insight import GetShowInsightUseCase, GetEpisodeInsightUseCase
 
 
@@ -17,10 +17,10 @@ class InsightResponse(BaseModel):
 async def get_show_insight(
     show_id: int,
     show_repository=Depends(get_show_repository),
-    ai_service=Depends(get_ai_service)
+    ai_service=Depends(get_ai_service),
+    comment_repository=Depends(get_comment_repository)
 ):
-    """Get AI-generated insight for a show."""
-    use_case = GetShowInsightUseCase(ai_service, show_repository)
+    use_case = GetShowInsightUseCase(ai_service, show_repository, comment_repository)
     
     result = await use_case.execute(show_id)
     if not result:
@@ -34,10 +34,10 @@ async def get_episode_insight(
     show_id: int,
     episode_id: int,
     show_repository=Depends(get_show_repository),
-    ai_service=Depends(get_ai_service)
+    ai_service=Depends(get_ai_service),
+    comment_repository=Depends(get_comment_repository)
 ):
-    """Get AI-generated insight for an episode."""
-    use_case = GetEpisodeInsightUseCase(ai_service, show_repository)
+    use_case = GetEpisodeInsightUseCase(ai_service, show_repository, comment_repository)
     
     result = await use_case.execute(show_id, episode_id)
     if not result:
