@@ -3,6 +3,7 @@ import { api } from '../services/api';
 import type { ShowWithEpisodes } from '../types';
 import { SeasonList } from './SeasonList';
 import { AIInsight } from './AIInsight';
+import { Comments } from './Comments';
 
 type ShowDetailsProps = {
   showId: number;
@@ -66,6 +67,8 @@ export function ShowDetails({ showId, onBack }: ShowDetailsProps) {
           <SeasonList seasons={show.seasons} showId={show.id} />
         )}
       </div>
+
+      <Comments showId={show.id} />
     </div>
   );
 }

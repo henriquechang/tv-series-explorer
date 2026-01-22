@@ -1,4 +1,4 @@
-import type { ShowSearchResult, ShowWithEpisodes } from '../types';
+import type { ShowSearchResult, ShowWithEpisodes, Comment } from '../types';
 
 const API_BASE = '/api';
 
@@ -9,8 +9,8 @@ class ApiError extends Error {
   }
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
+  const response = await fetch(url, options);
   if (!response.ok) {
     throw new ApiError(response.status, `HTTP ${response.status}`);
   }
@@ -35,5 +35,46 @@ export const api = {
     return fetchJson<{ insight: string; source: string }>(
       `${API_BASE}/shows/${showId}/episodes/${episodeId}/insight`
     );
+  },
+
+  async getShowComments(showId: number): Promise<Comment[]> {
+    return fetchJson<Comment[]>(`${API_BASE}/shows/${showId}/comments`);
+  },
+
+  async addShowComment(showId: number, text: string): Promise<Comment> {
+    const response = await fetch(`${API_BASE}/shows/${showId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP ${response.status}`);
+    }
+    return response.json();
+  },
+
+  async getEpisodeComments(episodeId: number): Promise<Comment[]> {
+    return fetchJson<Comment[]>(`${API_BASE}/episodes/${episodeId}/comments`);
+  },
+
+  async addEpisodeComment(showId: number, episodeId: number, text: string): Promise<Comment> {
+    const response = await fetch(`${API_BASE}/shows/${showId}/episodes/${episodeId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP ${response.status}`);
+    }
+    return response.json();
+  },
+
+  async deleteComment(commentId: number): Promise<void> {
+    const response = await fetch(`${API_BASE}/comments/${commentId}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP ${response.status}`);
+    }
   }
 };
