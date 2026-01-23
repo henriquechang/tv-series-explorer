@@ -76,5 +76,33 @@ export const api = {
     if (!response.ok) {
       throw new ApiError(response.status, `HTTP ${response.status}`);
     }
+  },
+
+  async getWatchedEpisodes(showId: number): Promise<{ episode_id: number; watched: boolean }[]> {
+    return fetchJson<{ episode_id: number; watched: boolean }[]>(`${API_BASE}/shows/${showId}/watched`);
+  },
+
+  async isEpisodeWatched(showId: number, episodeId: number): Promise<{ episode_id: number; watched: boolean }> {
+    return fetchJson<{ episode_id: number; watched: boolean }>(`${API_BASE}/shows/${showId}/episodes/${episodeId}/watched`);
+  },
+
+  async markEpisodeWatched(showId: number, episodeId: number): Promise<{ status: string; watched: boolean }> {
+    const response = await fetch(`${API_BASE}/shows/${showId}/episodes/${episodeId}/watched`, {
+      method: 'PUT'
+    });
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP ${response.status}`);
+    }
+    return response.json();
+  },
+
+  async unmarkEpisodeWatched(showId: number, episodeId: number): Promise<{ status: string; watched: boolean }> {
+    const response = await fetch(`${API_BASE}/shows/${showId}/episodes/${episodeId}/watched`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) {
+      throw new ApiError(response.status, `HTTP ${response.status}`);
+    }
+    return response.json();
   }
 };

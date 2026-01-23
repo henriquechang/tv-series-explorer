@@ -1,7 +1,16 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SeasonList } from './SeasonList'
+import { api } from '../services/api'
+
+vi.mock('../services/api', () => ({
+  api: {
+    getWatchedEpisodes: vi.fn().mockResolvedValue([]),
+    markEpisodeWatched: vi.fn().mockResolvedValue({ status: 'success', watched: true }),
+    unmarkEpisodeWatched: vi.fn().mockResolvedValue({ status: 'success', watched: false })
+  }
+}))
 
 describe('SeasonList', () => {
   const mockSeasons = [
@@ -57,13 +66,15 @@ describe('SeasonList', () => {
     expect(screen.getByText('2008-01-20')).toBeInTheDocument()
   })
 
-  it('shows episode summary', () => {
+  it('shows episode summary', async () => {
     render(<SeasonList seasons={mockSeasons} showId={1} />)
+    await userEvent.click(screen.getByText('Pilot'))
     expect(screen.getByText('First episode')).toBeInTheDocument()
   })
 
-  it('removes html from summary', () => {
+  it('removes html from summary', async () => {
     render(<SeasonList seasons={mockSeasons} showId={1} />)
+    await userEvent.click(screen.getByText('Pilot'))
     expect(screen.queryByText(/<p>/)).not.toBeInTheDocument()
     expect(screen.getByText('First episode')).toBeInTheDocument()
   })
@@ -77,5 +88,50 @@ describe('SeasonList', () => {
     render(<SeasonList seasons={mockSeasons} showId={1} />)
     const catBagElem = screen.getByText('Cat Bag').parentElement
     expect(catBagElem?.parentElement?.querySelector('.episode-summary')).not.toBeInTheDocument()
+  })
+
+  it('shows watched checkboxes', async () => {
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
+    await waitFor(() => {
+      const checkboxes = screen.getAllByRole('checkbox')
+      expect(checkboxes).toHaveLength(2) // Two episodes in first season
+      expect(checkboxes[0]).not.toBeChecked()
+      expect(checkboxes[1]).not.toBeChecked()
+    })
+  })
+
+  it('marks episode as watched', async () => {
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
+    
+    await waitFor(() => {
+      expect(screen.getAllByRole('checkbox')).toHaveLength(2)
+    })
+    
+    const checkbox = screen.getAllByRole('checkbox')[0]
+    await userEvent.click(checkbox)
+    
+    await waitFor(() => {
+      expect(vi.mocked(api.markEpisodeWatched)).toHaveBeenCalledWith(1, 1)
+    })
+  })
+
+  it('unmarks watched episode', async () => {
+    vi.mocked(api.getWatchedEpisodes).mockResolvedValueOnce([
+      { episode_id: 1, watched: true }
+    ])
+    
+    render(<SeasonList seasons={mockSeasons} showId={1} />)
+    
+    await waitFor(() => {
+      const checkbox = screen.getAllByRole('checkbox')[0]
+      expect(checkbox).toBeChecked()
+    })
+    
+    const checkbox = screen.getAllByRole('checkbox')[0]
+    await userEvent.click(checkbox)
+    
+    await waitFor(() => {
+      expect(vi.mocked(api.unmarkEpisodeWatched)).toHaveBeenCalledWith(1, 1)
+    })
   })
 })
