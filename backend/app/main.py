@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.infrastructure.api.routes import shows, episodes, ai, comments
+from app.infrastructure.api.routes import shows, episodes, ai, comments, watched
 from app.infrastructure.api.dependencies import cleanup_clients
 from app.infrastructure.persistence.database import init_db
 
@@ -33,6 +33,7 @@ app.include_router(shows.router, prefix="/api")
 app.include_router(episodes.router, prefix="/api")
 app.include_router(ai.router, prefix="/api")
 app.include_router(comments.router, prefix="/api")
+app.include_router(watched.router)
 
 
 @app.get("/health")
