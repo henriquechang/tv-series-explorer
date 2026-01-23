@@ -1,22 +1,25 @@
 version: "3.3"
 
 services:
-  backend:
-    build: ./backend
-    container_name: tv-explorer-backend
+  database:
+    image: alpine:latest
+    container_name: tv-explorer-database
+    volumes:
+      - db-data:/data
+    command: sh -c "while true; do sleep 3600; done"
+
+  app:
+    build: .
+    container_name: tv-explorer-app
     volumes:
       - db-data:/app/data
     environment:
       - DATABASE_URL=sqlite+aiosqlite:///./data/tvexplorer.db
       - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY:-}
-
-  frontend:
-    build: ./frontend
-    container_name: tv-explorer-frontend
     ports:
       - "7777:80"
     depends_on:
-      - backend
+      - database
 
 volumes:
   db-data:

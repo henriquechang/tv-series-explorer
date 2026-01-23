@@ -1,13 +1,21 @@
 # TV Series Explorer
 
-Interactive TV series browsing with AI-powered insights.
+Interactive TV series browsing with AI-powered insights and episode tracking.
 
 ## Tech Stack
 
-- **Backend:** Python 3.10, FastAPI 0.128.0
-- **Frontend:** React 19.2.0, TypeScript 5.9.3
-- **Docker:** Compose v3.3
-- **HuggingFace Inference API (with fallback)** Compose v3.3
+- **Backend:** Python 3.10, FastAPI 0.128.0, SQLAlchemy with SQLite
+- **Frontend:** React 19.2.0, TypeScript 5.9.3, Vite
+- **Docker:** Multi-stage build with Nginx serving frontend
+- **AI:** HuggingFace Inference API (with fallback)
+
+## Features
+
+- Browse TV series and seasons
+- Track watched episodes
+- Add comments to episodes
+- AI-powered episode insights
+- Persistent data storage with SQLite
 
 ## Quick Start (Docker)
 
@@ -16,7 +24,7 @@ Interactive TV series browsing with AI-powered insights.
 - Docker 20.10+
 - Docker Compose 1.29+ (or Docker Compose V2)
 
-### With HuggingFace API Key (Optional)
+### Running with Docker Compose
 
 Create a `.env` file in the project root:
 
@@ -67,11 +75,16 @@ npm install
 npm test
 npm run dev
 ```
+## Docker Architecture
 
-### Access
+The application uses a multi-stage Docker build:
 
-| Mode | URL |
-|------|-----|
-| Development (frontend) | http://localhost:3000 |
-| Development (backend API) | http://localhost:7777 |
-| Docker | http://localhost:7777 |
+1. **Frontend Build Stage:** Node.js Alpine image builds the React application
+2. **Runtime Stage:** Python slim image runs both:
+   - Nginx (port 80) serving the frontend and proxying API requests
+   - Uvicorn (port 7777) running the FastAPI backend
+
+The `docker-compose.yml` configures:
+- **database service:** Alpine container for SQLite volume management
+- **app service:** Combined frontend/backend application
+- **Persistent volume:** Stores SQLite database at `/app/data`
